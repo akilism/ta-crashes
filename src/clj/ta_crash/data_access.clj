@@ -1,6 +1,6 @@
 (ns ta-crash.data-access
   (:require
-    [clojure.string refer [split]]))
+    [clojure.string :refer [split]]))
 
 
 ;; a data point
@@ -69,7 +69,7 @@
 (defn generate-fake-data
   [years]
   (for [year years
-        month (range 11)
+        month (range 12)
         :let [data-point (build-point year month)]]
     data-point))
 

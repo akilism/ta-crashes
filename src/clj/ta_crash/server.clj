@@ -1,7 +1,7 @@
 (ns ta-crash.server
   (:require [clojure.java.io :as io]
             [ta-crash.dev :refer [is-dev? inject-devmode-html browser-repl start-figwheel]]
-            [compojure.core :refer [GET defroutes]]
+            [compojure.core :refer [GET defroutes context]]
             [compojure.route :refer [resources]]
             [net.cgrand.enlive-html :refer [deftemplate]]
             [net.cgrand.reload :refer [auto-reload]]
