@@ -8,14 +8,17 @@
 
   :test-paths ["test/clj"]
 
-  :dependencies [[org.clojure/clojure "1.6.0"]
+  :dependencies [[org.clojure/clojure "1.7.0"]
+                 [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  [org.clojure/clojurescript "0.0-3058" :scope "provided"]
                  [ring "1.3.2"]
                  [ring/ring-defaults "0.1.4"]
                  [compojure "1.3.2"]
                  [enlive "1.1.5"]
                  [org.omcljs/om "0.8.8"]
-                 [environ "1.0.0"]]
+                 [environ "1.0.0"]
+                 [ring/ring-json "0.3.1"]
+                 [cljs-http "0.1.35"]]
 
   :plugins [[lein-cljsbuild "1.0.5"]
             [lein-environ "1.0.0"]]
