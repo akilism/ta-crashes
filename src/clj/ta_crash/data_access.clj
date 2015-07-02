@@ -47,7 +47,7 @@
    :bicyclists-injured (rand-int 25)
    :pedestrians-injured (rand-int 25)
    :motorists-injured (rand-int 25)
-   :people-killed(rand-int 13)
+   :people-killed (rand-int 13)
    :bicyclists-killed (rand-int 8)
    :pedestrians-killed (rand-int 8)
    :motorists-killed (rand-int 8)

@@ -35,4 +35,4 @@
       ;(println "total-group-view: " data)
       (dom/div #js {:className "totals"}
         (apply dom/ul #js {:className "total-groups"}
-          (om/build-all total-group-item (:totals data)))))))
+          (om/build-all total-group (:totals data)))))))
