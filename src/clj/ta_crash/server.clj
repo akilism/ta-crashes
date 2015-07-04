@@ -24,7 +24,7 @@
     (GET "/" [] (rr/response (handlers/get-crash-data type identifier req)))
     (GET "/:date-range/" [date-range] (rr/response (handlers/get-crash-data type identifier date-range req)))
     (GET "/:date-range/:date-aggregate" [date-range date-aggregate] (rr/response (handlers/get-crash-data  type identifier date-range date-aggregate req))))
-  (GET "/*" req (page)))
+  (GET "/*" req (clojure.string/join "" (page))))
 
 (def http-handler
   (if is-dev?
