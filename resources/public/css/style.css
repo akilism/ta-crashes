@@ -1,3 +1,8 @@
-h1 {
-  text-decoration: underline;
-}
+.bar-graph .bar {
+  fill: #000; }
+.bar-graph .city {
+  fill: #CE1416; }
+.bar-graph .borough {
+  fill: #58CE31; }
+.bar-graph .selected {
+  fill: #4646CE; }
