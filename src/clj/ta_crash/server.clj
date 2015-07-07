@@ -1,7 +1,7 @@
 (ns ta-crash.server
   (:require [clojure.java.io :as io]
             [ta-crash.dev :refer [is-dev? inject-devmode-html browser-repl start-figwheel]]
-            [compojure.core :refer [GET defroutes]]
+            [compojure.core :refer [GET defroutes context]]
             [compojure.route :refer [resources]]
             [net.cgrand.enlive-html :refer [deftemplate]]
             [net.cgrand.reload :refer [auto-reload]]
@@ -24,7 +24,7 @@
     (GET "/" [] (rr/response (handlers/get-crash-data type identifier req)))
     (GET "/:date-range/" [date-range] (rr/response (handlers/get-crash-data type identifier date-range req)))
     (GET "/:date-range/:date-aggregate" [date-range date-aggregate] (rr/response (handlers/get-crash-data  type identifier date-range date-aggregate req))))
-  (GET "/*" req (page)))
+  (GET "/*" req (clojure.string/join "" (page))))
 
 (def http-handler
   (if is-dev?

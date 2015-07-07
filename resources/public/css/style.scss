@@ -1,0 +1,50 @@
+body {
+  font-family: 'Open Sans', Helvetica, Arial, Sans-Serif;
+}
+
+.container {
+  width: 90%;
+  margin: 0 auto;
+}
+
+
+.bar-graph {
+  .bar {
+    fill: #000;
+  }
+
+  .city {
+    fill: #CE1416;
+  }
+
+  .borough {
+    fill: #58CE31;
+  }
+
+  .selected  {
+    fill: #4646CE;
+  }
+}
+
+
+.axis {
+  fill: none;
+  stroke: #dfdfdf;
+  shape-rendering: crispEdges;
+
+  text {
+    fill: #000;
+    stroke: none;
+    stroke-weight: 0;
+  }
+
+  &.x {
+    font-size: 12px;
+  }
+
+  &.y {
+    font-size: 14px;
+  }
+}
+
+
