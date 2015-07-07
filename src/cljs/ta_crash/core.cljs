@@ -11,9 +11,9 @@
 (defonce app-state (atom {:data []
                           :active-years [2015]
                           :bar-data {:title "Pedestrians Injured"
-                                     :data [{:type :city :val 300 :name "34th St & 6th Ave"}
-                                            {:type :borough :val 150 :name "Carroll St & 5th Ave"}
-                                            {:type :selected :val 75 :name "Fulton Ave & Franklin St"}]} }))
+                                     :data [{:type :city :val 10000 :name "34th St & 6th Ave"}
+                                            {:type :borough :val 8000 :name "Carroll St & 5th Ave"}
+                                            {:type :selected :val 6500 :name "Fulton Ave & Franklin St"}]} }))
 
 (defn render-root []
   (go
