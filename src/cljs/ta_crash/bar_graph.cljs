@@ -1,6 +1,7 @@
 (ns ta-crash.bar-graph
   (:require [om.core :as om :include-macros true]
-           [om.dom :as dom :include-macros true]))
+           [om.dom :as dom :include-macros true]
+           [ta-crash.graph :as graph]))
 
 ; Title (ie "Pedestrian Injuries", "Crashes", "Bicyclist Deaths")
 
@@ -18,36 +19,14 @@
 ; :neighborhood :police-precinct :state-assembly
 ; :congressional
 
-(def margin {:top 0 :right 40 :bottom 10 :left 140})
+(def margin {:top 0 :right 40 :bottom 10 :left 150})
 (def y-tick-count 3)
 (def x-tick-count 10)
 (def tick-padding 5)
 (def bar-height 55)
-(def width (- (- 640 (:left margin)) (:right margin)))
+(def width (- (- 960 (:left margin)) (:right margin)))
 (def bar-padding 5)
 
-
-(defn type-formatter
-  [type]
-  (let [key-type (keyword type)]
-    (cond
-      (= :city key-type) "Worst in city."
-      (= :selected key-type) "Selected intersection."
-      :else (str "Worst in " type "."))))
-
-(defn number-formatter
-  [x]
-  ((.format js/d3 ",") x))
-
-(defn create-axis
-  [axis-scale axis-orientation tick-size tick-padding tick-format tick-count]
-  (-> (.axis (.-svg js/d3))
-    (.scale axis-scale)
-    (.orient (name axis-orientation))
-    (.tickSize tick-size)
-    (.tickPadding tick-padding)
-    (.tickFormat tick-format)
-    (.ticks tick-count)))
 
 (defn set-graph [graph-data]
   (let [height (- (+ (* 3 (+ bar-padding bar-height)) 30) (:top margin) (:bottom margin))
@@ -66,8 +45,8 @@
         type-scale (-> (.ordinal (.-scale js/d3))
                        (.domain (clj->js (map #(:type %) graph-data)))
                        (.rangeBands #js [0, height] 1))
-        y-axis (create-axis type-scale :right width tick-padding type-formatter count-data)
-        x-axis (create-axis total-scale :top height tick-padding number-formatter x-tick-count)
+        y-axis (graph/create-axis type-scale :right width tick-padding graph/type-formatter count-data)
+        x-axis (graph/create-axis total-scale :top height tick-padding graph/number-formatter x-tick-count)
         x-axis-group (-> (.append bar-group "g")
                          (.attr "transform" (str "translate(0 ," (- height 25) ")"))
                          (.attr "class" "x axis")
@@ -108,6 +87,6 @@
       ;(println "bar-graph-data: " title)
       (dom/div nil
         (dom/h2 #js {:className "graph-title"} title)
-        (dom/div #js {:className "bar-graph-modal"} )))))
+        (dom/div #js {:className "bar-graph-modal"})))))
 
 

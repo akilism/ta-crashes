@@ -3,7 +3,8 @@
             [om.dom :as dom :include-macros true]
             [ta-crash.aggregation :as agg]
             [ta-crash.total-factors :as factor]
-            [ta-crash.bar-graph :as bar-graph]))
+            [ta-crash.bar-graph :as bar-graph]
+            [ta-crash.line-graph :as line-graph]))
 
 (defmulti get-total-items (fn [type _] type))
 
@@ -89,7 +90,11 @@
         (assoc all-data :totals totals)))
     om/IRenderState
     (render-state [this state]
-      (dom/div nil (om/build bar-graph/bar-graph-view (:bar-data state)))
+      (println "total-groups-view: " (:line-graph-dimension state))
+      (dom/div nil 
+        (om/build line-graph/line-graph-view 
+          (line-graph/get-line-graph-data (:line-graph-dimension state) data)))
+      ;(dom/div nil (om/build bar-graph/bar-graph-view (:bar-data state)))
       ;(apply dom/div #js {:className "totals"}
       ;  (apply dom/ul #js {:className "total-groups"}
       ;    (om/build-all total-group (filter is-group? (:totals state))))

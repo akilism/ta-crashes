@@ -10,6 +10,7 @@
 
 (defonce app-state (atom {:data []
                           :active-years [2015]
+                          :line-graph-dimension :crashes
                           :bar-data {:title "Pedestrians Injured"
                                      :data [{:type :city :val 10000 :name "34th St & 6th Ave"}
                                             {:type :borough :val 8000 :name "Carroll St & 5th Ave"}
