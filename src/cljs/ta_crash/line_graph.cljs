@@ -27,7 +27,7 @@
     :bicycle "Bicycle Involved"
     :lost-consciousness "Lost Consciousness Contributing Factor"))
 
-(defn get-line-graph-data 
+(defn get-line-graph-data
   [type data]
   ;(println "get-line-graph-data: " (count data))
   {:title (get-graph-title type)
@@ -38,7 +38,7 @@
             :identifier (:identifier x)
             :val (get-data-type type (:totals x))}) data)})
 
-(defn set-graph 
+(defn set-graph
   [graph-data]
   (println (count (clj->js (map #(js/Date. (:year %) (:month %)) graph-data))))
   (let [count-data (count graph-data)
@@ -56,6 +56,12 @@
         time-scale (-> (.scale (.-time js/d3))
                        (.domain #js [(js/Date. (:year (first graph-data)) 0), (js/Date. (:year (first graph-data)) 11)])
                        (.range #js [0, width]))
+        x-pos (fn [d] (time-scale (.-month d)))
+        y-pos (fn [d] (total-scale (.-val d)))
+        line-segment (-> (.line (.-svg js/d3))
+                         (.x (fn [d] (x-pos d)))
+                         (.y (fn [d] (y-pos d)))
+                         (.interpolate "linear"))
         y-axis (graph/create-axis total-scale :right width tick-padding graph/number-formatter y-tick-count)
         x-axis (graph/create-axis time-scale :top height tick-padding graph/month-formatter x-tick-count)
         x-axis-group (-> (.append line-group "g")
@@ -66,8 +72,7 @@
                          (.attr "x" 0)
                          (.attr "y" 12)
                          (.attr "dx" "-1.5em")
-                         (.style "text-anchor" "start")
-                         )
+                         (.style "text-anchor" "start"))
         y-axis-group (-> (.append line-group "g")
                          (.attr "transform" (str "translate(0, -25)"))
                          (.attr "class" "y axis")
@@ -77,16 +82,13 @@
                          (.attr "y" 0)
                          (.attr "dy" ".25em")
                          (.style "text-anchor" "end"))
-        lines (-> (.selectAll line-group "rect.bar")
-                 (.data (clj->js graph-data)))
+        lines (-> (.selectAll line-group "path.crash-month-line")
+                  (.data (clj->js graph-data)))
         enter (.enter lines)]
     (println "set-graph:" graph-data)
-    ;(-> (.append enter "svg:rect")
-    ;    (.attr "x" 0)
-    ;    (.attr "y" #(* bar-height %2))
-    ;    (.attr "height" (- bar-height bar-padding))
-    ;    (.attr "width" #(total-scale (.-val %)))
-    ;    (.attr "class" #(.-type %)))
+    (-> (.append enter "svg:path")
+        (.attr "d" line-segment)
+        (.attr "class" #(.-year %)))
     ))
 
 (defn line-graph-view
