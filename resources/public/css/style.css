@@ -26,3 +26,8 @@ body {
     font-size: 12px; }
   .axis.y {
     font-size: 14px; }
+
+.year-line {
+  fill: none;
+  stroke: #000;
+  stroke-weight: 1px; }

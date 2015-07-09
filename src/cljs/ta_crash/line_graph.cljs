@@ -18,7 +18,6 @@
     ; (println "type-total: " (:total-crashes type-total))
     (:total-crashes type-total)))
 
-
 (defn get-graph-title
   [type]
   (case type
@@ -40,13 +39,13 @@
 
 (defn set-graph
   [graph-data]
-  (println (count (clj->js (map #(js/Date. (:year %) (:month %)) graph-data))))
+  ;(println (count (clj->js (map #(js/Date. (:year %) (:month %)) graph-data))))
   (let [count-data (count graph-data)
         svg (-> (.append (.select js/d3 ".line-graph-modal") "svg")
                 (.attr "width" (+ width (:right margin) (:left margin)))
                 (.attr "height" (+ height (:top margin) (:bottom margin))))
         line-group (-> (.append svg "g")
-                      (.attr "transform" (str "translate(" (:left margin) "," 0 ")")))
+                       (.attr "transform" (str "translate(" (:left margin) "," 0 ")")))
         domain-max (.max js/d3 (clj->js (map #(:val %) graph-data)))
         domain-min (.min js/d3 (clj->js (map #(:val %) graph-data)))
         total-scale (-> (.linear (.-scale js/d3))
@@ -56,11 +55,11 @@
         time-scale (-> (.scale (.-time js/d3))
                        (.domain #js [(js/Date. (:year (first graph-data)) 0), (js/Date. (:year (first graph-data)) 11)])
                        (.range #js [0, width]))
-        x-pos (fn [d] (time-scale (.-month d)))
+        x-pos (fn [d] (time-scale (js/Date. (.-year d) (.-month d))))
         y-pos (fn [d] (total-scale (.-val d)))
         line-segment (-> (.line (.-svg js/d3))
-                         (.x (fn [d] (x-pos d)))
-                         (.y (fn [d] (y-pos d)))
+                         (.x #(x-pos %))
+                         (.y #(y-pos %))
                          (.interpolate "linear"))
         y-axis (graph/create-axis total-scale :right width tick-padding graph/number-formatter y-tick-count)
         x-axis (graph/create-axis time-scale :top height tick-padding graph/month-formatter x-tick-count)
@@ -86,14 +85,16 @@
                   (.data (clj->js graph-data)))
         enter (.enter lines)]
     (println "set-graph:" graph-data)
-    (-> (.append enter "svg:path")
-        (.attr "d" line-segment)
-        (.attr "class" #(.-year %)))
-    ))
+    (-> (.append line-group "path")
+        (.attr "d" (line-segment (clj->js graph-data)))
+        (.attr "class" "year-line"))
+    (-> (.append enter "svg:circle")
+        (.attr "cx" #(x-pos %))
+        (.attr "cy" #(y-pos %))
+        (.attr "r" 3))))
 
 (defn line-graph-view
   [{:keys [data title] :as state} owner]
-  (println title)
   (reify
     om/IDidMount
     (did-mount [this]
