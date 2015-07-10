@@ -4,7 +4,8 @@
             [om.dom :as dom :include-macros true]
             [cljs.core.async :refer [<!]]
             [ta-crash.requester :as requester]
-            [ta-crash.total-groups :as total-groups]))
+            [ta-crash.total-groups :as total-groups]
+            [secretary.core :as secretary :refer-macros [defroute]]))
 
 (enable-console-print!)
 
