@@ -81,17 +81,26 @@
                          (.attr "y" 0)
                          (.attr "dy" ".25em")
                          (.style "text-anchor" "end"))
-        lines (-> (.selectAll line-group "path.crash-month-line")
+        lines (-> (.selectAll line-group "path.year-line")
                   (.data (clj->js graph-data)))
         enter (.enter lines)]
     (println "set-graph:" graph-data)
     (-> (.append line-group "path")
         (.attr "d" (line-segment (clj->js graph-data)))
         (.attr "class" "year-line"))
+    (-> (.selectAll line-group "circle")
+        (.remove))
     (-> (.append enter "svg:circle")
         (.attr "cx" #(x-pos %))
         (.attr "cy" #(y-pos %))
-        (.attr "r" 3))))
+        (.attr "r" 3)
+        (.attr "class" "year-marker circle"))
+    (-> (.append enter "svg:circle")
+        (.attr "cx" #(x-pos %))
+        (.attr "cy" #(y-pos %))
+        (.attr "r" 8)
+        (.attr "class" "year-hover circle"))
+    (.remove (.exit lines))))
 
 (defn line-graph-view
   [{:keys [data title] :as state} owner]

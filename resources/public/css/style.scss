@@ -47,10 +47,20 @@ body {
   }
 }
 
+.line-graph-modal {
+  .year-line {
+    fill: none;
+    stroke: #000;
+    //shape-rendering: crispEdges;
+    stroke-width: 2px;
+  }
 
-.year-line {
-  fill: none;
-  stroke: #000;
-  //shape-rendering: crispEdges;
-  stroke-weight: 1px;
+  .year-marker {
+    //shape-rendering: crispEdges;
+  }
+
+  .year-hover {
+    fill: transparent;
+  }
 }
+
