@@ -23,6 +23,7 @@
 
 (defonce target {:target (. js/document (getElementById "app"))})
 
+;;; Helpers for setting state data.
 
 (defmulti set-state-data!
   (fn [type _]
@@ -40,6 +41,7 @@
         identifier (keyword (:identifier (first data)))]
     (swap! app-state assoc-in [:data type identifier] data)
     (swap! app-state assoc :identifier [identifier] :type [type])))
+
 
 ;;; Page Render Methods
 
@@ -75,6 +77,8 @@
     app-state
     target))
 
+
+;;; Client Side Routes
 (defn get-area-type []
   (if-let [area-type (.getItem (.-localStorage js/window) "area")]
     (keyword area-type)
