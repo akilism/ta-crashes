@@ -18,7 +18,8 @@
                  [org.omcljs/om "0.8.8"]
                  [environ "1.0.0"]
                  [ring/ring-json "0.3.1"]
-                 [cljs-http "0.1.35"]]
+                 [cljs-http "0.1.35"]
+                 [secretary "1.2.3"]]
 
   :plugins [[lein-cljsbuild "1.0.5"]
             [lein-environ "1.0.0"]]

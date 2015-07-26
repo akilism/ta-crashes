@@ -1,9 +1,125 @@
+html {
+  box-sizing: border-box; }
+
+*, *:before, *:after {
+  box-sizing: inherit; }
+
 body {
-  font-family: 'Open Sans', Helvetica, Arial, Sans-Serif; }
+  font-family: 'Montserrat', Helvetica, Arial, Sans-Serif;
+  margin: 0;
+  padding: 0; }
+
+#app {
+  margin: 0;
+  padding: 0; }
 
 .container {
   width: 90%;
   margin: 0 auto; }
+
+.home {
+  background-image: url("/images/home_back.jpg");
+  background-color: #AEF1C5;
+  background-size: cover;
+  background-blend-mode: darken;
+  background-position: center bottom;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0; }
+
+.home-header {
+  color: #fff;
+  font-weight: normal;
+  font-size: 84px;
+  margin-top: 10px; }
+
+.home-search-bar {
+  border-radius: 10px;
+  border: 1px solid #dfdfdf;
+  background-color: rgba(255, 255, 255, 0.87);
+  color: #000;
+  padding: 20px 0;
+  height: 65px;
+  width: 645px;
+  margin: 25% auto 0 auto;
+  text-align: center; }
+
+.home-search-text {
+  font-size: 18px; }
+
+.home-search-input {
+  width: 240px;
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid #000;
+  font-size: 18px; }
+
+.home-search-button {
+  background-color: #FF3E00;
+  border: none;
+  height: 30px;
+  width: 90px;
+  border-radius: 2px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: normal;
+  margin-left: 10px; }
+
+.text-stats {
+  font-size: 18px; }
+  .text-stats a {
+    text-decoration: none;
+    color: #3e3e3e;
+    transition: color 150ms; }
+    .text-stats a:visited {
+      color: #3e3e3e;
+      text-decoration: none;
+      transition: color 150ms; }
+    .text-stats a:hover, .text-stats a:active {
+      color: #70684A;
+      text-decoration: none;
+      border-bottom: 1px solid #70684A;
+      transition: color 150ms; }
+  .text-stats .label {
+    white-space: nowrap;
+    background-color: #fff; }
+  .text-stats .total-crashes {
+    font-size: 92px; }
+    .text-stats .total-crashes .label {
+      font-size: 24px; }
+  .text-stats .stat-col {
+    width: 380px;
+    display: inline-block;
+    padding-bottom: 15px; }
+    .text-stats .stat-col:last-child {
+      border-left: 1px solid #dfdfdf;
+      padding-left: 75px; }
+    .text-stats .stat-col .type-crash-total {
+      font-size: 54px;
+      line-height: 20px;
+      margin: 30px 0 15px 0; }
+      .text-stats .stat-col .type-crash-total .label {
+        font-size: 18px; }
+    .text-stats .stat-col .type-total {
+      font-size: 64px; }
+      .text-stats .stat-col .type-total .label {
+        font-size: 18px; }
+    .text-stats .stat-col .break-down {
+      margin: 0;
+      padding: 0;
+      list-style: none; }
+      .text-stats .stat-col .break-down li {
+        text-align: center;
+        margin-top: 25px;
+        display: inline-block;
+        text-transform: capitalize; }
+        .text-stats .stat-col .break-down li:nth-child(even) {
+          margin: 25px 26px 0 26px; }
+      .text-stats .stat-col .break-down .total {
+        font-size: 36px;
+        display: block; }
 
 .bar-graph .bar {
   fill: #000; }
@@ -26,3 +142,10 @@ body {
     font-size: 12px; }
   .axis.y {
     font-size: 14px; }
+
+.line-graph-modal .year-line {
+  fill: none;
+  stroke: #000;
+  stroke-width: 2px; }
+.line-graph-modal .year-hover {
+  fill: transparent; }
