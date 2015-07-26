@@ -10,16 +10,6 @@
 (def width (- (- 960 (:left margin)) (:right margin)))
 (def height (- (- 640 (:top margin)) (:bottom margin)))
 
-;(defmulti get-data-type (fn [type _] type))
-
-;(defmethod get-data-type :crashes
-;  [type totals]
-;  (let [type-total (first (filter #(= :crashes (keyword (:type %))) totals))]
-;    ; (println "type-total: " (:total-crashes type-total))
-;    (:total-crashes type-total)))
-
-;(defmulti get-data-type (fn [parent & _] parent))
-
 (defn get-data-type
   [parent type totals]
   (let [type-total (first (filter #(= parent (keyword (:type %))) totals))]
@@ -55,28 +45,16 @@
              :identifier (:identifier x)
              :val (get-data-type parent type (:totals x))}) data)}))
 
-;(defn get-line-graph-data
-;  [type data]
-;  ;(println "get-line-graph-data: " (count data))
-;  {:title (get-graph-title type)
-;   :data (map (fn [x]
-;          {:month (:month x)
-;            :year (:year x)
-;            :type (:type x)
-;            :identifier (:identifier x)
-;            :val (get-data-type type (:totals x))}) data)})
 
 (defn get-svg
   [selector]
-  (if-let [svg (.select (.select js/d3 selector) "svg")]
-    svg
-    (.append (.select js/d3 selector) "svg")))
+  (let [svg (.select (.select js/d3 selector) "svg")]
+    (if (nil? (first (first (js->clj svg)))) (.append (.select js/d3 selector) "svg") svg)))
 
 (defn get-g
   [selector from-elem]
-  (if-let [g (.select from-elem selector)]
-    g
-    (.append from-elem "g")))
+  (let [g (.select from-elem selector)]
+    (if (nil? (first (first (js->clj g)))) (.append from-elem "g") g)))
 
 (defn set-graph
   [graph-data]
@@ -85,7 +63,8 @@
         svg (-> (get-svg ".line-graph-modal")
                 (.attr "width" (+ width (:right margin) (:left margin)))
                 (.attr "height" (+ height (:top margin) (:bottom margin))))
-        line-group (-> (.append svg "g")
+        line-group (-> (get-g ".line-group" svg)
+                       (.attr "class" "line-group")
                        (.attr "transform" (str "translate(" (:left margin) "," 0 ")")))
         domain-max (.max js/d3 (clj->js (map #(:val %) graph-data)))
         domain-min (.min js/d3 (clj->js (map #(:val %) graph-data)))
@@ -104,7 +83,7 @@
                          (.interpolate "linear"))
         y-axis (graph/create-axis total-scale :right width tick-padding graph/number-formatter y-tick-count)
         x-axis (graph/create-axis time-scale :top height tick-padding graph/month-formatter x-tick-count)
-        x-axis-group (-> (.append line-group "g")
+        x-axis-group (-> (get-g ".axis.x" line-group)
                          (.attr "transform" (str "translate(0 ," (- height 25) ")"))
                          (.attr "class" "x axis")
                          (.call x-axis)
@@ -113,7 +92,7 @@
                          (.attr "y" 12)
                          (.attr "dx" "-1.5em")
                          (.style "text-anchor" "start"))
-        y-axis-group (-> (.append line-group "g")
+        y-axis-group (-> (get-g ".axis.y" line-group)
                          (.attr "transform" (str "translate(0, -25)"))
                          (.attr "class" "y axis")
                          (.call y-axis)
@@ -126,6 +105,8 @@
                   (.data (clj->js graph-data)))
         enter (.enter lines)]
     (println "set-graph:" graph-data)
+    (-> (.selectAll line-group "path")
+        (.remove))
     (-> (.append line-group "path")
         (.attr "d" (line-segment (clj->js graph-data)))
         (.attr "class" "year-line"))
