@@ -20,7 +20,7 @@
 (defroutes routes
   (resources "/")
   (resources "/react" {:root "react"})
-  (context "/api/:type/:identifier" [type identifier :as req]
+  (context "/api/:page-type/:area-type/:identifier" [type identifier :as req]
     (GET "/" [] (rr/response (handlers/get-crash-data type identifier req)))
     (GET "/:date-range/" [date-range] (rr/response (handlers/get-crash-data type identifier date-range req)))
     (GET "/:date-range/:date-aggregate" [date-range date-aggregate] (rr/response (handlers/get-crash-data  type identifier date-range date-aggregate req))))

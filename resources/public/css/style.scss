@@ -8,6 +8,13 @@ html {
 
 body {
   font-family: 'Montserrat', Helvetica, Arial, Sans-Serif;
+  margin: 0;
+  padding: 0;
+}
+
+#app {
+  margin: 0;
+  padding: 0;
 }
 
 .container {
@@ -70,6 +77,98 @@ body {
   font-weight: normal;
   margin-left: 10px;
 }
+
+
+.text-stats {
+  font-size: 18px;
+
+  a {
+    text-decoration: none;
+    color: #3e3e3e;
+    transition: color 150ms;
+
+    &:visited {
+      color: #3e3e3e;
+      text-decoration: none;
+      transition: color 150ms;
+    }
+
+    &:hover,
+    &:active {
+      color: #70684A;
+      text-decoration: none;
+      border-bottom: 1px solid #70684A;
+      transition: color 150ms;
+    }
+  }
+
+  .label {
+    white-space: nowrap;
+    background-color: #fff;
+  }
+
+  .total-crashes {
+    font-size: 92px;
+
+    .label {
+      font-size: 24px;
+    }
+  }
+
+  .stat-col {
+    width: 380px;
+    display: inline-block;
+    padding-bottom: 15px;
+
+    &:last-child {
+      border-left: 1px solid #dfdfdf;
+      padding-left: 75px;
+    }
+
+    .type-crash-total {
+      font-size: 54px;
+      line-height: 20px;
+      margin: 30px 0 15px 0;
+
+      .label {
+        font-size: 18px;
+      }
+    }
+
+    .type-total {
+      font-size: 64px;
+
+      .label {
+        font-size: 18px;
+      }
+    }
+
+    .break-down {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+
+      li {
+        text-align: center;
+        margin-top: 25px;
+        display: inline-block;
+        text-transform: capitalize;
+
+        &:nth-child(even) {
+          margin: 25px 26px 0 26px;
+        }
+      }
+
+      .total {
+        font-size: 36px;
+        display: block;
+      }
+    }
+  }
+
+}
+
+
 
 .bar-graph {
   .bar {

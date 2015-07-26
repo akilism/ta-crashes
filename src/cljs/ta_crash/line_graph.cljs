@@ -10,38 +10,79 @@
 (def width (- (- 960 (:left margin)) (:right margin)))
 (def height (- (- 640 (:top margin)) (:bottom margin)))
 
-(defmulti get-data-type (fn [type _] type))
+;(defmulti get-data-type (fn [type _] type))
 
-(defmethod get-data-type :crashes
-  [type totals]
-  (let [type-total (first (filter #(= :crashes (keyword (:type %))) totals))]
-    ; (println "type-total: " (:total-crashes type-total))
-    (:total-crashes type-total)))
+;(defmethod get-data-type :crashes
+;  [type totals]
+;  (let [type-total (first (filter #(= :crashes (keyword (:type %))) totals))]
+;    ; (println "type-total: " (:total-crashes type-total))
+;    (:total-crashes type-total)))
+
+;(defmulti get-data-type (fn [parent & _] parent))
+
+(defn get-data-type
+  [parent type totals]
+  (let [type-total (first (filter #(= parent (keyword (:type %))) totals))]
+    ;(println "type-total: " (type type-total))
+    (type type-total)))
 
 (defn get-graph-title
   [type]
   (case type
-    :crashes "Total Crashes"
+    :total-crashes "Total Crashes"
+    :total-with-death "Total crashes resulting in a death"
+    :total-with-injured "Total crashes resulting in an injury"
+    :people-killed "Total Persons Killed"
     :pedestrians-killed "Pedestrians Killed"
+    :bicyclists-killed "Bicyclists Killed"
+    :motorists-killed "Motorists Killed"
+    :people-injured "Total Persons Injured"
+    :pedestrians-injured "Pedestrians Injured"
+    :bicyclists-injured "Bicyclists Injured"
+    :motorists-injured "Motorists Injured"
     :bicycle "Bicycle Involved"
     :lost-consciousness "Lost Consciousness Contributing Factor"))
 
-(defn get-line-graph-data
-  [type data]
-  ;(println "get-line-graph-data: " (count data))
-  {:title (get-graph-title type)
-   :data (map (fn [x]
-          {:month (:month x)
-            :year (:year x)
-            :type (:type x)
-            :identifier (:identifier x)
-            :val (get-data-type type (:totals x))}) data)})
+(defn build-data
+  [dimension data]
+  (let [[parent type] dimension]
+    ; (println parent " & " type)
+    {:title (get-graph-title type)
+     :data (map (fn [x]
+            {:month (:month x)
+             :year (:year x)
+             :type (:type x)
+             :identifier (:identifier x)
+             :val (get-data-type parent type (:totals x))}) data)}))
+
+;(defn get-line-graph-data
+;  [type data]
+;  ;(println "get-line-graph-data: " (count data))
+;  {:title (get-graph-title type)
+;   :data (map (fn [x]
+;          {:month (:month x)
+;            :year (:year x)
+;            :type (:type x)
+;            :identifier (:identifier x)
+;            :val (get-data-type type (:totals x))}) data)})
+
+(defn get-svg
+  [selector]
+  (if-let [svg (.select (.select js/d3 selector) "svg")]
+    svg
+    (.append (.select js/d3 selector) "svg")))
+
+(defn get-g
+  [selector from-elem]
+  (if-let [g (.select from-elem selector)]
+    g
+    (.append from-elem "g")))
 
 (defn set-graph
   [graph-data]
   ;(println (count (clj->js (map #(js/Date. (:year %) (:month %)) graph-data))))
   (let [count-data (count graph-data)
-        svg (-> (.append (.select js/d3 ".line-graph-modal") "svg")
+        svg (-> (get-svg ".line-graph-modal")
                 (.attr "width" (+ width (:right margin) (:left margin)))
                 (.attr "height" (+ height (:top margin) (:bottom margin))))
         line-group (-> (.append svg "g")
@@ -106,10 +147,14 @@
   [{:keys [data title] :as state} owner]
   (reify
     om/IDidMount
-    (did-mount [this]
+    (did-mount [_]
+      (set-graph data))
+    om/IDidUpdate
+    (did-update [_ prev-p prev-s]
+      (println "did-update: " data)
       (set-graph data))
     om/IRenderState
-    (render-state [this {:keys [line-data]}]
+    (render-state [_ {:keys [line-data]}]
       ;(println "line-graph-data: " data)
       (dom/div nil
         (dom/h2 #js {:className "graph-title"} title)
