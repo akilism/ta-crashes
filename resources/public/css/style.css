@@ -143,6 +143,10 @@ body {
   .axis.y {
     font-size: 14px; }
 
+.graph-title {
+  font-weight: normal;
+  font-size: 36px; }
+
 .line-graph-modal .year-line {
   fill: none;
   stroke: #000;

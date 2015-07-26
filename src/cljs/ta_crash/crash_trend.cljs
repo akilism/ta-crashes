@@ -4,6 +4,7 @@
             [om.dom :as dom :include-macros true]
             [cljs.core.async :refer [put! chan <!]]
             [ta-crash.aggregation :as agg]
+            [ta-crash.header :as header]
             [ta-crash.text-stats :as text-stats]
             [ta-crash.line-graph :as line-graph]))
 
@@ -44,6 +45,7 @@
     (render-state
       [_ state]
       (dom/div #js {:className "container"}
+        (om/build header/header-view ())
         (om/build text-stats/text-stats-view
           (get-totals [:crashes :injured :killed] (get-in state [:trend-data :totals]) {})
           {:init-state {:set-line-chart-data (:set-line-chart-data state)}})
