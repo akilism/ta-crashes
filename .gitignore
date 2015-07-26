@@ -2,3 +2,6 @@
 .lein-repl-history
 resources/public/js/
 target/
+.nrepl-port
+.repl
+resources/public/css/.sass-cache
