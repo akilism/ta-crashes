@@ -18,7 +18,7 @@
 
 (defn get-break-down
   [data]
-  (map (fn [[k v]] {:type (get-type k) :total v})
+  (map (fn [[k v]] {:type k :total v})
        (filter (fn [[k v]] (contains? valid-types k)) data)))
 
 (defmulti build-stat
@@ -64,7 +64,7 @@
       (render-state [_ state]
         (dom/li nil
           (om/build stat-link
-            {:total (:total data) :label (name (:type data)) :type (:type data)}
+            {:total (:total data) :label (name (get-type (:type data))) :type [(:parent-type state) (:type data)]}
             {:init-state state})))))
 
 (defn stat-col-view
@@ -84,7 +84,7 @@
           (apply dom/ul #js {:className "break-down"}
             (om/build-all stat-break-down-view
               (:break-down data)
-              {:init-state state}))))))
+              {:init-state (assoc state :parent-type (first (:type-type data)))}))))))
 
 (defn text-stats-view
   [data owner]

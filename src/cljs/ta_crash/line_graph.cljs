@@ -69,7 +69,7 @@
         domain-max (.max js/d3 (clj->js (map #(:val %) graph-data)))
         domain-min (.min js/d3 (clj->js (map #(:val %) graph-data)))
         total-scale (-> (.linear (.-scale js/d3))
-                        (.domain #js [0, (+ domain-max 50)])
+                        (.domain #js [0, (+ domain-max 10)])
                         (.range #js [height, 0])
                         (.nice))
         time-scale (-> (.scale (.-time js/d3))
@@ -104,24 +104,27 @@
         lines (-> (.selectAll line-group "path.year-line")
                   (.data (clj->js graph-data)))
         enter (.enter lines)]
-    (println "set-graph:" graph-data)
+    ;(println "set-graph:" graph-data)
     (-> (.selectAll line-group "path")
         (.remove))
     (-> (.append line-group "path")
         (.attr "d" (line-segment (clj->js graph-data)))
-        (.attr "class" "year-line"))
+        (.attr "class" "year-line")
+        (.attr "transform" (str "translate(0, -25)")))
     (-> (.selectAll line-group "circle")
         (.remove))
     (-> (.append enter "svg:circle")
         (.attr "cx" #(x-pos %))
         (.attr "cy" #(y-pos %))
         (.attr "r" 3)
-        (.attr "class" "year-marker circle"))
+        (.attr "class" "year-marker circle")
+        (.attr "transform" (str "translate(0, -25)")))
     (-> (.append enter "svg:circle")
         (.attr "cx" #(x-pos %))
         (.attr "cy" #(y-pos %))
         (.attr "r" 8)
-        (.attr "class" "year-hover circle"))
+        (.attr "class" "year-hover circle")
+        (.attr "transform" (str "translate(0, -25)")))
     (.remove (.exit lines))))
 
 (defn line-graph-view
@@ -132,7 +135,6 @@
       (set-graph data))
     om/IDidUpdate
     (did-update [_ prev-p prev-s]
-      (println "did-update: " data)
       (set-graph data))
     om/IRenderState
     (render-state [_ {:keys [line-data]}]
