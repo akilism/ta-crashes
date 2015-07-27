@@ -45,7 +45,10 @@
     (render-state
       [_ state]
       (dom/div #js {:className "container"}
-        (om/build header/header-view ())
+        (om/build header/header-view
+          {:areas (:areas data)
+           :type-ident (get-type-identifier data)
+           :page-type (:page-type data)})
         (om/build text-stats/text-stats-view
           (get-totals [:crashes :injured :killed] (get-in state [:trend-data :totals]) {})
           {:init-state {:set-line-chart-data (:set-line-chart-data state)}})

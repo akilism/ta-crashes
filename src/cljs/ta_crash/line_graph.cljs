@@ -45,7 +45,6 @@
              :identifier (:identifier x)
              :val (get-data-type parent type (:totals x))}) data)}))
 
-
 (defn get-svg
   [selector]
   (let [svg (.select (.select js/d3 selector) "svg")]

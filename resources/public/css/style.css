@@ -6,6 +6,7 @@ html {
 
 body {
   font-family: 'Montserrat', Helvetica, Arial, Sans-Serif;
+  font-size: 18px;
   margin: 0;
   padding: 0; }
 
@@ -66,6 +67,61 @@ body {
   font-size: 14px;
   font-weight: normal;
   margin-left: 10px; }
+
+.header {
+  margin-bottom: 30px; }
+  .header .header-left {
+    width: 40%;
+    float: left; }
+  .header .header-right {
+    width: 60%;
+    display: flex;
+    margin-top: 20px;
+    float: right;
+    flex-direction: row;
+    justify-content: space-around; }
+  .header button {
+    height: 50px;
+    width: 150px;
+    color: #fff;
+    font-size: 24px;
+    border: none;
+    border-radius: 4px; }
+    .header button.active {
+      background-color: #178A3F; }
+    .header button.inactive {
+      background-color: #F36725; }
+  .header .site-name {
+    font-size: 24px; }
+  .header .identifier {
+    font-weight: normal;
+    font-size: 48px;
+    margin: 0; }
+  .header .sub-nav {
+    border-top: 1px solid #3A2D02;
+    padding-top: 10px;
+    clear: both; }
+    .header .sub-nav ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around; }
+      .header .sub-nav ul li {
+        display: inline-block;
+        margin: 0 5px;
+        text-transform: capitalize; }
+        .header .sub-nav ul li:first-child {
+          margin-left: 0; }
+        .header .sub-nav ul li:last-child {
+          margin-right: 0; }
+    .header .sub-nav .active {
+      color: #178A3F;
+      text-decoration: none; }
+    .header .sub-nav .inactive {
+      color: #322F65;
+      text-decoration: underline; }
 
 .text-stats {
   font-size: 18px; }

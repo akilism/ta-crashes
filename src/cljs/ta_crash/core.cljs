@@ -16,6 +16,7 @@
 (defonce app-state (atom {:data {}
                           :active-years [2015]
                           :line-chart-dimension [:crashes :total-crashes]
+                          :areas [:borough :community-board :city-council :precinct :zip-code :neighborhood]
                           :bar-data {:title "Pedestrians Injured"
                                      :data [{:type :city :val 10000 :name "34th St & 6th Ave"}
                                             {:type :borough :val 8000 :name "Carroll St & 5th Ave"}
@@ -26,21 +27,21 @@
 ;;; Helpers for setting state data.
 
 (defmulti set-state-data!
-  (fn [type _]
-    type))
+  (fn [page-type _]
+    page-type))
 
 (defmethod set-state-data! :crash-map
-  [_ data])
+  [page-type data])
 
 (defmethod set-state-data! :crash-rank
-  [_ data])
+  [page-type data])
 
 (defmethod set-state-data! :crash-trend
-  [_ data]
+  [page-type data]
   (let [type (keyword (:type (first data)))
         identifier (keyword (:identifier (first data)))]
     (swap! app-state assoc-in [:data type identifier] data)
-    (swap! app-state assoc :identifier [identifier] :type [type])))
+    (swap! app-state assoc :identifier [identifier] :type [type] :page-type [page-type])))
 
 
 ;;; Page Render Methods
@@ -87,11 +88,11 @@
 (defroute home "/" []
   (render-page :home))
 
-(defroute page-path "/:page-type/:identifier" {:as params}
+(defroute page-path "/:page-type/:area-type/:identifier" {:as params}
   (go
     (let [page-type (keyword (:page-type params))
           identifier (keyword (:identifier params))
-          area-type (get-area-type)
+          area-type (keyword (:area-type params))
           data (<! (requester/get-data page-type area-type identifier))]
       (set-state-data! page-type data)
       (render-page page-type data))))
