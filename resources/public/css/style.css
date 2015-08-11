@@ -209,3 +209,6 @@ body {
   stroke-width: 2px; }
 .line-graph-modal .year-hover {
   fill: transparent; }
+
+#map {
+  height: 720px; }

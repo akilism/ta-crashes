@@ -8,6 +8,7 @@
             [ta-crash.crash-map :as map]
             [ta-crash.crash-rank :as rank]
             [ta-crash.crash-trend :as trend]
+            [ta-crash.crash-map :as crash-map]
             [ta-crash.total-groups :as total-groups]
             [secretary.core :as secretary :refer-macros [defroute]]))
 
@@ -60,7 +61,7 @@
 (defmethod render-page :crash-map
   [_ identifier date-start date-end date-display]
   (om/root
-    home/home-view
+    crash-map/crash-map-view
     app-state
     target))
 
