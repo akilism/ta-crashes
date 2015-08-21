@@ -9,6 +9,7 @@
             [ta-crash.crash-rank :as rank]
             [ta-crash.crash-trend :as trend]
             [ta-crash.crash-map :as crash-map]
+            [ta-crash.crash :as crash]
             [ta-crash.total-groups :as total-groups]
             [secretary.core :as secretary :refer-macros [defroute]]))
 
@@ -32,6 +33,9 @@
     page-type))
 
 (defmethod set-state-data! :crash-map
+  [page-type data])
+
+(defmethod set-state-data! :crashes
   [page-type data])
 
 (defmethod set-state-data! :crash-rank
@@ -79,6 +83,13 @@
     app-state
     target))
 
+(defmethod render-page :crashes
+  [_ identifier date-start date-end date-display]
+  (om/root
+    crash/crashes-view
+    app-state
+    target))
+
 
 ;;; Client Side Routes
 (defn get-area-type []
@@ -97,6 +108,14 @@
           data (<! (requester/get-data page-type area-type identifier))]
       (set-state-data! page-type data)
       (render-page page-type data))))
+
+(defroute default-path "/:area-type/:identifier" {:as params}
+  (go
+    (let [identifier (keyword (:identifier params))
+          area-type (keyword (:area-type params))
+          data (<! (requester/get-data :crashes area-type identifier))]
+      (set-state-data! :crashes data)
+      (render-page :crashes data))))
 
 (defn get-client-route []
   (let [location (.-location js/window)

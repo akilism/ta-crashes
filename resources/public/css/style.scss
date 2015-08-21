@@ -1,3 +1,5 @@
+$linkColor: #322F65;
+
 html {
   box-sizing: border-box;
 }
@@ -21,6 +23,9 @@ body {
 .container {
   width: 90%;
   margin: 0 auto;
+  display: flex;
+  flex-flow: row wrap;
+  align-items: stretch;
 }
 
 .home {
@@ -82,6 +87,7 @@ body {
 
 .header {
   margin-bottom: 30px;
+  flex: 1 100%;
 
   .header-left {
     width: 40%;
@@ -158,7 +164,7 @@ body {
     }
 
     .inactive {
-      color: #322F65;
+      color: $linkColor;
       text-decoration: underline;
     }
   }
@@ -318,4 +324,83 @@ body {
 
 #map {
   height: 720px;
+  width: 65%;
+  flex: 3 0px;
+}
+
+.stats {
+  flex: 1 auto;
+}
+
+// * {
+//   box-sizing: border-box;
+// }
+
+// .factor-table {
+//   border: 1px solid black;
+//     border-collapse: collapse;
+//     font-size: 14px;
+//     margin: 0 auto;
+//     margin-top: 10px;
+// }
+
+// .factor-table td {
+//   border: 1px solid black;
+// }
+
+// .factor {
+
+// }
+
+// .factor-count {
+//   border-right-width: 2px;
+//   padding-right: 8px;
+//   padding-left: 5px;
+// }
+
+// tr:nth-child(odd) {
+//   background-color: #FDECFF;
+// }
+
+
+.factor-list {
+  list-style: none;
+  margin: 30px 15px;
+  font-size: 14px;
+  display: flex;
+  flex-wrap: wrap;
+
+  .factor {
+    width: 355px;
+    flex: 1 0 auto;
+    padding: 5px 7px;
+    border-bottom: 1px solid black;
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    align-items: center;
+    transition: background-color 20ms;
+
+    &:hover {
+      background-color: #E0DBFF;
+      transition: background-color 20ms;
+    }
+
+    a {
+      text-decoration: none;
+      color: #322F65;
+      display: flex;
+      flex: 1 1 auto;
+    }
+  }
+
+  .name {
+    flex: 2 2 auto;
+    padding-right: 5px;
+  }
+
+  .count {
+    flex: 1 0 auto;
+    text-align: right;
+  }
 }
