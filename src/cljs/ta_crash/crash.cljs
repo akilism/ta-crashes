@@ -5,6 +5,11 @@
             [cljs.core.async :refer [put! chan <!]]
             [ta-crash.header :as header]))
 
+(defonce crash-map (atom nil))
+
+(def map-id "map")
+(def nyc-coords [40.78 -73.97])
+(def default-zoom 11)
 
 (defn get-type-identifier
   [data]
@@ -13,16 +18,35 @@
     (println "data:" data)
     [type identifier]))
 
-(defn get-map
-  [coords zoom]
-  (-> (.map js/L "map")
-      (.setView (clj->js coords) zoom)))
+(defn new-map []
+  (.map js/L map-id))
+
+(defn get-map []
+  (if (nil? @crash-map)
+    (swap! crash-map new-map)
+    @crash-map))
 
 (defn set-map
   [coords zoom tile-url tile-opts]
-  (let [crash-map (get-map coords zoom)]
+  (let [crash-map (get-map)]
+    (-> crash-map
+        (.setView (clj->js coords) zoom))
     (-> (.tileLayer js/L tile-url (clj->js tile-opts))
       (.addTo crash-map))))
+
+(defn set-geo-layer
+  [geo-data options]
+  (.geoJson js/L (clj->js geo-data) options))
+
+(defn set-shape
+  [geo-data]
+  (let [crash-map (get-map)
+        geo-layer (set-geo-layer geo-data {})]
+    (do
+      (-> geo-layer
+          (.addTo crash-map))
+      (-> crash-map
+          (.fitBounds (.getBounds geo-layer))))))
 
 (defn crashes-view
   [data owner]
@@ -38,8 +62,9 @@
       (let [tile-url "http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png"
             tile-opts {
             :attribution "&copy; <a href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a> &copy; <a href=\"http://cartodb.com/attributions\">CartoDB</a>",
-            :subdomains "abcd" :minZoom 11 :maxZoom 17}]
-        (set-map [40.78 -73.97] 11 tile-url tile-opts)))
+            :subdomains "abcd" :minZoom 11 :maxZoom 17}
+            crash-map (set-map nyc-coords default-zoom tile-url tile-opts)]
+        (set-shape (:geo-data data))))
     om/IRenderState
     (render-state
       [_ state]

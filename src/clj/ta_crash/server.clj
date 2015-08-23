@@ -20,6 +20,9 @@
 (defroutes routes
   (resources "/")
   (resources "/react" {:root "react"})
+  (context "/geo/:area-type" [area-type :as req]
+    (GET "/" [] (rr/response (handlers/get-shape area-type)))
+    (GET "/:identifier" [identifier] (rr/response (handlers/get-shape area-type identifier))))
   (context "/api/:page-type/:area-type/:identifier" [type identifier :as req]
     (GET "/" [] (rr/response (handlers/get-crash-data type identifier req)))
     (GET "/:date-range/" [date-range] (rr/response (handlers/get-crash-data type identifier date-range req)))

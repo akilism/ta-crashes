@@ -14,3 +14,8 @@
   ([type identifier date-range date-aggregate req]
    (aggregate-data date-aggregate (data-access/get-crash-data-for-date-range type identifier date-range))))
 
+(defn get-shape
+  ([area-type]
+   (data-access/get-all-shapes area-type))
+  ([area-type identifier]
+   (data-access/get-shape area-type identifier)))

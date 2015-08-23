@@ -6,3 +6,4 @@ target/
 .repl
 .cljs_rhino_repl
 resources/public/css/.sass-cache
+notes

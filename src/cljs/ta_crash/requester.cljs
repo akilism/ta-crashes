@@ -6,8 +6,14 @@
 (defn build-api-url
   ([]
     "/api/p/1")
-  ([page-type area-type  identifier]
+  ([page-type area-type identifier]
     (str "/api/" (name page-type) "/" (name area-type) "/" (name identifier))))
+
+(defn build-geo-url
+  ([area-type]
+   (str "/geo/" (name area-type)))
+  ([area-type identifier]
+   (str "/geo/" (name area-type) "/" (name identifier))))
 
 (defn make-request
   [url]
@@ -24,5 +30,15 @@
         data)))
   ([page-type area-type identifier]
    (go (let [url (build-api-url page-type area-type  identifier)
+             data (<! (make-request url))]
+         data))))
+
+(defn get-geo-data
+  ([area-type]
+   (go (let [url (build-geo-url area-type)
+             data (<! (make-request url))]
+         data)))
+  ([area-type identifier]
+   (go (let [url (build-geo-url area-type identifier)
              data (<! (make-request url))]
          data))))

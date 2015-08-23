@@ -48,6 +48,10 @@
     (swap! app-state assoc-in [:data type identifier] data)
     (swap! app-state assoc :identifier [identifier] :type [type] :page-type [page-type])))
 
+(defmethod set-state-data! :geo
+  [_ data]
+  (swap! app-state assoc :geo-data data))
+
 
 ;;; Page Render Methods
 
@@ -113,8 +117,10 @@
   (go
     (let [identifier (keyword (:identifier params))
           area-type (keyword (:area-type params))
-          data (<! (requester/get-data :crashes area-type identifier))]
+          data (<! (requester/get-data :crashes area-type identifier))
+          geo-data (<! (requester/get-geo-data area-type identifier))]
       (set-state-data! :crashes data)
+      (set-state-data! :geo geo-data)
       (render-page :crashes data))))
 
 (defn get-client-route []

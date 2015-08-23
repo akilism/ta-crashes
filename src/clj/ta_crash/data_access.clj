@@ -1,6 +1,16 @@
 (ns ta-crash.data-access
   (:require
-    [clojure.string :refer [split]]))
+    [clojure.string :as str]
+    [clojure.data.json :as json]))
+
+(defn get-borough-id
+  [borough]
+  (case borough
+    "bronx" 2
+    "brooklyn" 3
+    "manhattan" 1
+    "queens" 4
+    "staten-island" 5))
 
 (defn build-point
   [year month]
@@ -50,7 +60,7 @@
 
 (defn get-date-values
   [date-range]
-  (split date-range #"!$!"))
+  (str/split date-range #"!$!"))
 
 (defn get-crash-data
   [type identifier]
@@ -62,3 +72,21 @@
   (let [[start end] (get-date-values date-range)]
     ;; query database here.
     crash-data))
+
+(defn get-all-shapes
+  [area-type]
+  (json/read-str (slurp (str "static-resources/geo/" area-type ".geojson")) :key-fn keyword))
+
+(defn get-geo-features
+  [identifier features]
+  (filter #(= identifier (get-in % [:properties :identifier])) features))
+
+(defn get-shape
+  [area-type identifier]
+  ;(println area-type ":" identifier)
+  (let [data (get-all-shapes area-type)
+        features (:features data)]
+    ;(println (get-in (first features) [:properties :identifier]) " - " (get-borough-id identifier))
+    (if (= "borough" area-type)
+      {:type "FeatureCollection" :features (get-geo-features (get-borough-id identifier) features)}
+      {:type "FeatureCollection" :features (get-geo-features identifier features)})))
