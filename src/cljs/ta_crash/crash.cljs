@@ -20,8 +20,9 @@
   :maxZoom 17})
 (def feature-style {:weight 2
                     :opacity 1
-                    :fill false
+                    :fill true
                     :stroke true
+                    :fillOpacity 0
                     :color "#000000"})
 
 (defn get-type-identifier
@@ -62,10 +63,16 @@
       (remove-layer)
       (swap! outline-layer (fn [] geo-layer)))))
 
+(defn set-feature
+  [feature layer]
+  (println "set-feature" layer)
+  (.bindPopup layer (.. js/feature -properties -identifier))
+  (.on layer "click" (fn [e] (println "properties" (.. js/feature -properties -identifier)))))
+
 (defn set-shape
   [geo-data]
   (let [crash-map (get-map)
-        geo-layer (set-geo-layer geo-data {:style feature-style})]
+        geo-layer (set-geo-layer geo-data {:style feature-style :onEachFeature set-feature})]
     (do
       (check-outline-layer geo-layer)
       (-> geo-layer
