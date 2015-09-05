@@ -6,6 +6,7 @@
             [ta-crash.header :as header]
             [ta-crash.tooltip :as tooltip]
             [ta-crash.crash-map-embed :as crash-map]
+            [ta-crash.text-stats :as text-stats]
             [ta-crash.requester :as requester]
             [secretary.core :as secretary]))
 
