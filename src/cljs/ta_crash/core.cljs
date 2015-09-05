@@ -16,7 +16,9 @@
 (enable-console-print!)
 
 (defonce app-state (atom {:data {}
+                          :hover-data {}
                           :active-years [2015]
+                          :active-type []
                           :line-chart-dimension [:crashes :total-crashes]
                           :areas [:borough :community-board :city-council :precinct :zip-code :neighborhood]
                           :bar-data {:title "Pedestrians Injured"
@@ -120,7 +122,7 @@
           data (<! (requester/get-data :crashes area-type identifier))
           geo-data (<! (requester/get-geo-data area-type identifier))]
       (set-state-data! :crashes data)
-      (set-state-data! :geo geo-data)
+      (set-state-data! :geo (assoc geo-data :active-type area-type))
       (render-page :crashes data))))
 
 (defn get-client-route []

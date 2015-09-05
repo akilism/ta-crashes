@@ -2,7 +2,7 @@
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
-            [cljs.core.async :refer [put! chan <!]]))
+            [cljs.core.async :refer [>! chan <!]]))
 
 (def valid-types {:motorists-injured 1 :motorists-killed 1 :pedestrians-injured 1 :pedestrians-killed 1 :bicyclists-injured 1 :bicyclists-killed 1})
 
@@ -52,7 +52,7 @@
     (render-state [_ {:keys [set-line-chart-data]}]
       (dom/a #js {:onClick (fn [e]
                               (.preventDefault e)
-                              (put! set-line-chart-data (:type data)))
+                              (>! set-line-chart-data (:type data)))
                   :href "#"}
         (dom/span #js {:className "total"} (:total data))
         (dom/span #js {:className "label"} (:label data))))))

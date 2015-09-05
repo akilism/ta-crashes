@@ -87,6 +87,9 @@
   (let [data (get-all-shapes area-type)
         features (:features data)]
     ;(println (get-in (first features) [:properties :identifier]) " - " (get-borough-id identifier))
-    (if (= "borough" area-type)
-      {:type "FeatureCollection" :features (get-geo-features (get-borough-id identifier) features)}
+    (println area-type "-" identifier)
+    (case area-type
+      "borough" {:type "FeatureCollection" :features (get-geo-features (get-borough-id identifier) features)}
+      "city-council" {:type "FeatureCollection" :features (get-geo-features (Integer/parseInt identifier) features)}
+      "community-board" {:type "FeatureCollection" :features (get-geo-features (Integer/parseInt identifier) features)}
       {:type "FeatureCollection" :features (get-geo-features identifier features)})))

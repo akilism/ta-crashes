@@ -240,10 +240,21 @@ body {
       text-decoration: none;
       color: #322F65;
       display: flex;
-      flex: 1 1 auto; }
+      flex: 1 1 auto;
+      text-transform: capitalize; }
   .factor-list .name {
     flex: 2 2 auto;
     padding-right: 5px; }
   .factor-list .count {
     flex: 1 0 auto;
     text-align: right; }
+
+.tool-tip {
+  padding: 10px 25px;
+  border-radius: 3px;
+  background-color: #fff;
+  color: #000;
+  font-size: 1.25rem;
+  position: absolute;
+  display: none;
+  text-transform: capitalize; }

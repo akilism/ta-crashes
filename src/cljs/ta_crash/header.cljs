@@ -58,7 +58,6 @@
     data)
     om/IRenderState
     (render-state [_ state]
-      (println (:nav-chan state))
       (dom/div #js {:className "header"}
         (dom/div #js {:className "header-left"}
           (dom/div #js {:className "site-name"} "CrashPad")

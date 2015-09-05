@@ -360,6 +360,7 @@ body {
       color: #322F65;
       display: flex;
       flex: 1 1 auto;
+      text-transform: capitalize;
     }
   }
 
@@ -372,4 +373,16 @@ body {
     flex: 1 0 auto;
     text-align: right;
   }
+}
+
+
+.tool-tip {
+  padding: 10px 25px;
+  border-radius: 3px;
+  background-color: #fff;
+  color: #000;
+  font-size: 1.25rem;
+  position: absolute;
+  display: none;
+  text-transform: capitalize;
 }

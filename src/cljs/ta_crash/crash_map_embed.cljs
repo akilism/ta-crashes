@@ -1,14 +1,8 @@
-(ns ta-crash.crash
+(ns ta-crash.crash-map-embed
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
-            [cljs.core.async :refer [put! chan <!]]
-            [ta-crash.header :as header]
-            [ta-crash.tooltip :as tooltip]
-            [ta-crash.requester :as requester]
-            [secretary.core :as secretary]))
-
-
+            [cljs.core.async :refer [put! chan <!]]))
 
 (def crash-map (atom nil))
 (def outline-layer (atom nil))
@@ -36,6 +30,7 @@
                     :fillOpacity 0
                     :color "#000000"})
 
+;; remove
 (defn get-borough
   [id]
   (case id
@@ -45,6 +40,7 @@
     4 "queens"
     5 "staten island"))
 
+;; remove
 (defn get-name-display
   [type identifier]
   (case type
@@ -54,6 +50,7 @@
     :precinct (str "police precinct " identifier)
     identifier))
 
+;; remove
 (defn get-type-identifier
   [data]
   (let [type (first (:type data))
@@ -61,14 +58,17 @@
     ;(println "data:" data)
     [type identifier]))
 
+;; keep
 (defn new-map []
   (.map js/L map-id))
 
+;; keep
 (defn get-map []
   (if (nil? @crash-map)
     (swap! crash-map new-map)
     @crash-map))
 
+;; keep
 (defn set-map
   [coords zoom tile-url tile-opts]
   (let [crash-map (get-map)]
@@ -77,14 +77,17 @@
     (-> (.tileLayer js/L tile-url (clj->js tile-opts))
       (.addTo crash-map))))
 
+;; keep
 (defn set-geo-layer
   [geo-data options]
   (.geoJson js/L (clj->js geo-data) (clj->js options)))
 
+;; keep
 (defn remove-layer []
   (let [crash-map (get-map)]
     (.removeLayer crash-map @outline-layer)))
 
+;; keep
 (defn check-outline-layer [geo-layer]
   (if (nil? @outline-layer)
     (swap! outline-layer (fn [] geo-layer))
@@ -92,6 +95,7 @@
       (remove-layer)
       (swap! outline-layer (fn [] geo-layer)))))
 
+;; keep
 (defn set-feature
   [feature layer type]
   ;(println "set-feature" layer)
@@ -101,6 +105,7 @@
   (.on layer "mouseout" (fn [e] (put! map-hover-chan [e (.-properties js/feature)])))
   (.on layer "mousemove" (fn [e] (put! map-hover-chan [e (.-properties js/feature)]))))
 
+;; keep
 (defn set-shape
   [geo-data]
   (let [crash-map (get-map)
@@ -114,12 +119,14 @@
       (-> crash-map
           (.fitBounds (.getBounds geo-layer))))))
 
+;;remove
 (defn nav-to
   [nav-selection data]
   (go (let [geo-data (<! (requester/get-geo-data nav-selection))]
     (om/transact! data :geo-data (fn [] (assoc geo-data :active-type nav-selection)))
     (om/transact! data :set-shapes (fn [] true)))))
 
+;; remove
 (defn handle-hover
   [{:keys [identifier type x y]} data]
   (condp = type
@@ -127,12 +134,14 @@
     :mousemove (om/transact! data (fn [] {:show true :type :name :pos {:x x :y y} :identifier identifier}))
     :mouseout (om/transact! data (fn [] {:show false}))))
 
+;; remove
 (defn get-indentifier
   [type identifier]
   (case type
     :borough (get-borough identifier)
     identifier))
 
+;; remove
 (defn filter-map
   [[type identifier]]
   (let [path (str "/" (name type) "/" (get-indentifier type identifier))
@@ -140,21 +149,21 @@
     (.pushState js/history #js {:type type :identifier identifier}, (str type "-" identifier) path)
     (secretary/dispatch! path)))
 
-(defn crashes-view
+(defn map-view
   [data owner]
   (reify
-    om/IWillMount
-    (will-mount [_]
-      (let [nav-chan (om/get-state owner :nav-chan)]
-        (go (loop []
-          (let [[v ch] (alts! [nav-chan map-hover-chan map-click-chan])]
-            ;; run handler for each channel.
-            ;(println "go" v)
-            (condp = ch
-              nav-chan (nav-to v data)
-              map-hover-chan (handle-hover v (om/ref-cursor (:hover-data data)))
-              map-click-chan (filter-map v))
-            (recur))))))
+;    om/IWillMount
+;    (will-mount [_]
+;      (let [nav-chan (om/get-state owner :nav-chan)]
+;        (go (loop []
+;          (let [[v ch] (alts! [nav-chan map-hover-chan map-click-chan])]
+;            ;; run handler for each channel.
+;            ;(println "go" v)
+;            (condp = ch
+;              nav-chan (nav-to v data)
+;              map-hover-chan (handle-hover v (om/ref-cursor (:hover-data data)))
+;              map-click-chan (filter-map v))
+;            (recur))))))
     om/IWillUpdate
     (will-update [_ next-props next-state]
       (when (:set-shapes next-props)
@@ -173,12 +182,4 @@
     om/IRenderState
     (render-state
       [_ state]
-      (dom/div #js {:className "container"}
-        (om/build header/header-view
-          {:areas (:areas data)
-           :type-ident ["precinct" "83rd"];(get-type-identifier data)
-           :page-type (:page-type data)
-           :nav-chan (:nav-chan state)})
-        (dom/div #js {:className "stats" } "Stats")
-        (dom/div #js {:className "map" :id "map"})
-        (om/build tooltip/tool-tip (assoc (:hover-data data) :display-f get-name-display :type (-> data :geo-data :active-type)))))))
+      (dom/div #js {:className "map" :id "map"}))))
