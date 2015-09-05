@@ -3,14 +3,17 @@
             [om.dom :as dom :include-macros true]))
 
 (def tool-tip-offset {:x 5 :y -10})
+
 (defn get-display
   [show]
   (if show
     "block"
     "none"))
+
 (defn to-px
   [val]
   (str val "px"))
+
 (defn tool-tip
   [data owner]
   (reify

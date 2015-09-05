@@ -5,36 +5,16 @@
             [cljs.core.async :refer [put! chan <!]]
             [ta-crash.header :as header]
             [ta-crash.tooltip :as tooltip]
+            [ta-crash.crash-map-embed :as crash-map]
             [ta-crash.requester :as requester]
             [secretary.core :as secretary]))
 
-
-
-(def crash-map (atom nil))
-(def outline-layer (atom nil))
 (defn transform-hover
   [[event feature]]
   (let [event-type (.-type js/event)
         dom-event (.-originalEvent js/event)
         identifier (.-identifier js/feature) ]
     {:type (keyword event-type) :identifier (.-identifier js/feature) :x (.-x dom-event) :y (.-y dom-event)}))
-
-(def map-hover-chan (chan 1 (map transform-hover)))
-(def map-click-chan (chan))
-(def map-id "map")
-(def nyc-coords [40.78 -73.97])
-(def default-zoom 11)
-(def tile-url "http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png")
-(def tile-opts { :attribution "&copy; <a href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a> &copy; <a href=\"http://cartodb.com/attributions\">CartoDB</a>"
-  :subdomains "abcd"
-  :minZoom 11
-  :maxZoom 17})
-(def feature-style {:weight 2
-                    :opacity 1
-                    :fill true
-                    :stroke true
-                    :fillOpacity 0
-                    :color "#000000"})
 
 (defn get-borough
   [id]
@@ -58,61 +38,7 @@
   [data]
   (let [type (first (:type data))
         identifier (first (:identifier data))]
-    ;(println "data:" data)
     [type identifier]))
-
-(defn new-map []
-  (.map js/L map-id))
-
-(defn get-map []
-  (if (nil? @crash-map)
-    (swap! crash-map new-map)
-    @crash-map))
-
-(defn set-map
-  [coords zoom tile-url tile-opts]
-  (let [crash-map (get-map)]
-    (-> crash-map
-        (.setView (clj->js coords) zoom))
-    (-> (.tileLayer js/L tile-url (clj->js tile-opts))
-      (.addTo crash-map))))
-
-(defn set-geo-layer
-  [geo-data options]
-  (.geoJson js/L (clj->js geo-data) (clj->js options)))
-
-(defn remove-layer []
-  (let [crash-map (get-map)]
-    (.removeLayer crash-map @outline-layer)))
-
-(defn check-outline-layer [geo-layer]
-  (if (nil? @outline-layer)
-    (swap! outline-layer (fn [] geo-layer))
-    (do
-      (remove-layer)
-      (swap! outline-layer (fn [] geo-layer)))))
-
-(defn set-feature
-  [feature layer type]
-  ;(println "set-feature" layer)
-  ;(.bindPopup layer (.. js/feature -properties -identifier))
-  (.on layer "click" (fn [e] (put! map-click-chan [type (.. js/feature -properties -identifier)])))
-  (.on layer "mouseover" (fn [e] (put! map-hover-chan [e (.-properties js/feature)])))
-  (.on layer "mouseout" (fn [e] (put! map-hover-chan [e (.-properties js/feature)])))
-  (.on layer "mousemove" (fn [e] (put! map-hover-chan [e (.-properties js/feature)]))))
-
-(defn set-shape
-  [geo-data]
-  (let [crash-map (get-map)
-        geo-layer (set-geo-layer geo-data {:style feature-style :onEachFeature #(set-feature %1 %2 (:active-type geo-data))})]
-    (do
-      (let [bounds (.getBounds geo-layer)]
-        (println (.toBBoxString bounds)))
-      (check-outline-layer geo-layer)
-      (-> geo-layer
-          (.addTo crash-map))
-      (-> crash-map
-          (.fitBounds (.getBounds geo-layer))))))
 
 (defn nav-to
   [nav-selection data]
@@ -135,6 +61,7 @@
 
 (defn filter-map
   [[type identifier]]
+  (println type " - " identifier)
   (let [path (str "/" (name type) "/" (get-indentifier type identifier))
         history (.-history js/window)]
     (.pushState js/history #js {:type type :identifier identifier}, (str type "-" identifier) path)
@@ -145,31 +72,22 @@
   (reify
     om/IWillMount
     (will-mount [_]
-      (let [nav-chan (om/get-state owner :nav-chan)]
+      (let [nav-chan (om/get-state owner :nav-chan)
+            map-hover-chan (om/get-state owner :map-hover-chan)
+            map-click-chan (om/get-state owner :map-click-chan)]
         (go (loop []
           (let [[v ch] (alts! [nav-chan map-hover-chan map-click-chan])]
-            ;; run handler for each channel.
-            ;(println "go" v)
+            ; (println "go" v)
             (condp = ch
               nav-chan (nav-to v data)
               map-hover-chan (handle-hover v (om/ref-cursor (:hover-data data)))
               map-click-chan (filter-map v))
             (recur))))))
-    om/IWillUpdate
-    (will-update [_ next-props next-state]
-      (when (:set-shapes next-props)
-        (set-shape (:geo-data next-props))
-        (om/transact! data :set-shapes (fn [] false))))
     om/IInitState
     (init-state [_]
-      (assoc data :nav-chan (chan)))
-    om/IDidMount
-    (did-mount [_]
-      (when (not (nil? @crash-map))
-        (reset! crash-map nil))
-      (set-map nyc-coords default-zoom tile-url tile-opts)
-      (when (not (nil? (:geo-data data)))
-        (set-shape (:geo-data data))))
+      (assoc data :nav-chan (chan)
+                  :map-hover-chan (chan 1 (map transform-hover))
+                  :map-click-chan (chan)))
     om/IRenderState
     (render-state
       [_ state]
@@ -180,5 +98,6 @@
            :page-type (:page-type data)
            :nav-chan (:nav-chan state)})
         (dom/div #js {:className "stats" } "Stats")
-        (dom/div #js {:className "map" :id "map"})
+        (om/build crash-map/map-view data {:init-state {:map-hover-chan (om/get-state owner :map-hover-chan)
+                                                   :map-click-chan (om/get-state owner :map-click-chan)}})
         (om/build tooltip/tool-tip (assoc (:hover-data data) :display-f get-name-display :type (-> data :geo-data :active-type)))))))
