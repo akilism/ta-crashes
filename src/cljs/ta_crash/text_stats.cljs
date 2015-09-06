@@ -91,7 +91,7 @@
   (reify
     om/IRenderState
     (render-state [_ state]
-      (apply dom/div #js {:className "text-stats"}
+      (apply dom/div #js {:className "stats"}
         (dom/div #js {:className "total-crashes"}
           (om/build stat-link
             {:total (get-in data [:crashes :total-crashes]) :label " Total crashes" :type [:crashes :total-crashes]}

@@ -40,6 +40,10 @@
 (defmethod set-state-data! :crashes
   [page-type data])
 
+(defmethod set-state-data! :stats
+  [_ data]
+  (swap! app-state assoc :stats data))
+
 (defmethod set-state-data! :crash-rank
   [page-type data])
 
@@ -121,7 +125,7 @@
           area-type (keyword (:area-type params))
           data (<! (requester/get-data :crashes area-type identifier))
           geo-data (<! (requester/get-geo-data area-type identifier))]
-      (set-state-data! :crashes data)
+      (set-state-data! :stats data)
       (set-state-data! :geo (assoc geo-data :active-type area-type))
       (render-page :crashes data))))
 

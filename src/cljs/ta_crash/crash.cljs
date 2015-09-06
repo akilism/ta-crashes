@@ -3,6 +3,7 @@
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [cljs.core.async :refer [put! chan <!]]
+            [ta-crash.aggregation :as agg]
             [ta-crash.header :as header]
             [ta-crash.tooltip :as tooltip]
             [ta-crash.crash-map-embed :as crash-map]
@@ -68,6 +69,13 @@
     (.pushState js/history #js {:type type :identifier identifier}, (str type "-" identifier) path)
     (secretary/dispatch! path)))
 
+(defn get-totals
+  [[t & ts] data acc]
+  (cond
+    (nil? t) acc
+    :else (recur ts data (assoc acc t (first (filter #(= t (:type %)) data))))))
+
+
 (defn crashes-view
   [data owner]
   (reify
@@ -88,7 +96,8 @@
     (init-state [_]
       (assoc data :nav-chan (chan)
                   :map-hover-chan (chan 1 (map transform-hover))
-                  :map-click-chan (chan)))
+                  :map-click-chan (chan)
+                  :stat-data (first (agg/total-data agg/sum-all-data (get-in data [:stats])))))
     om/IRenderState
     (render-state
       [_ state]
@@ -98,7 +107,9 @@
            :type-ident ["precinct" "83rd"];(get-type-identifier data)
            :page-type (:page-type data)
            :nav-chan (:nav-chan state)})
-        (dom/div #js {:className "stats" } "Stats")
+        (om/build text-stats/text-stats-view
+          (get-totals [:crashes :injured :killed] (get-in state [:stat-data :totals]) {})
+          {:init-state {:set-line-chart-data (:set-line-chart-data state)}})
         (om/build crash-map/map-view data {:init-state {:map-hover-chan (om/get-state owner :map-hover-chan)
                                                    :map-click-chan (om/get-state owner :map-click-chan)}})
         (om/build tooltip/tool-tip (assoc (:hover-data data) :display-f get-name-display :type (-> data :geo-data :active-type)))))))
