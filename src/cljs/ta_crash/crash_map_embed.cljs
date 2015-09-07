@@ -19,7 +19,7 @@
   :subdomains "abcd"
   :minZoom 11
   :maxZoom 17})
-(def feature-style {:weight 2
+(def feature-style {:weight 1.5
                     :opacity 1
                     :fill true
                     :stroke true

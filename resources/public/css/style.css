@@ -16,10 +16,7 @@ body {
 
 .container {
   width: 90%;
-  margin: 0 auto;
-  display: flex;
-  flex-flow: row wrap;
-  align-items: stretch; }
+  margin: 0 auto; }
 
 .home {
   background-image: url("/images/home_back.jpg");
@@ -123,7 +120,9 @@ body {
       text-decoration: underline; }
 
 .stats {
-  font-size: 18px; }
+  font-size: 18px;
+  width: 35%;
+  display: inline-block; }
   .stats a {
     text-decoration: none;
     color: #3e3e3e;
@@ -141,20 +140,25 @@ body {
     white-space: nowrap;
     background-color: #fff; }
   .stats .total-crashes {
-    font-size: 92px; }
+    border-bottom: 1px solid #dfdfdf;
+    padding: 0 10px 15px 0; }
+    .stats .total-crashes .total {
+      font-size: 4.5rem;
+      line-height: 1; }
     .stats .total-crashes .label {
-      font-size: 24px; }
+      font-size: 24px;
+      line-height: 1; }
   .stats .stat-col {
-    width: 380px;
-    display: inline-block;
-    padding-bottom: 15px; }
-    .stats .stat-col:last-child {
-      border-left: 1px solid #dfdfdf;
+    width: 100%;
+    display: block;
+    padding: 20px 15px 20px 0;
+    border-bottom: 1px solid #dfdfdf; }
+    .stats .stat-col:first-child {
       padding-left: 75px; }
     .stats .stat-col .type-crash-total {
       font-size: 54px;
       line-height: 20px;
-      margin: 30px 0 15px 0; }
+      margin: 15px 0; }
       .stats .stat-col .type-crash-total .label {
         font-size: 18px; }
     .stats .stat-col .type-total {
@@ -164,7 +168,10 @@ body {
     .stats .stat-col .break-down {
       margin: 0;
       padding: 0;
-      list-style: none; }
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-around; }
       .stats .stat-col .break-down li {
         text-align: center;
         margin-top: 25px;
@@ -210,12 +217,10 @@ body {
   fill: transparent; }
 
 #map {
-  height: 720px;
+  height: 690px;
   width: 65%;
-  flex: 3 1; }
-
-.stats {
-  flex: 1 auto; }
+  display: inline-block;
+  vertical-align: top; }
 
 .factor-list {
   list-style: none;
